@@ -49,7 +49,5 @@ pip install -r requirements.txt
 
 Feel free to contribute to this project by opening issues or submitting pull requests. All contributions are welcome!
 
----
 
-Feel free to customize this README according to your project's specific details and requirements. If you have any questions or need further assistance, please let me know!
 
