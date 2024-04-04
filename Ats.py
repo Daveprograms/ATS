@@ -13,7 +13,6 @@ load_dotenv()
 # Configure the generative AI model with the Google API key
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-
 # Set up the model configuration for text generation
 generation_config = {
     "temperature": 0.4,
@@ -27,7 +26,6 @@ safety_settings = [
     {"category": f"HARM_CATEGORY_{category}", "threshold": "BLOCK_MEDIUM_AND_ABOVE"}
     for category in ["HARASSMENT", "HATE_SPEECH", "SEXUALLY_EXPLICIT", "DANGEROUS_CONTENT"]
 ]
-
 
 def generate_response_from_gemini(input_text):
     # Create a GenerativeModel instance with 'gemini-pro' as the model type
@@ -71,7 +69,7 @@ I want the response in one single string having the structure
 # Initialize Streamlit app
 st.title("Intelligent ATS-Enhance Your Resume ATS")
 st.markdown('<style>h1{color: orange; text-align: center;}</style>', unsafe_allow_html=True)
-job_description = st.text_area("Paste the Job Description",height=300)
+job_description = st.text_area("Paste the Job Description", height=300)
 uploaded_file = st.file_uploader("Upload Your Resume", type=["pdf", "docx"], help="Please upload a PDF or DOCX file")
 
 submit_button = st.button("Submit")
@@ -87,20 +85,24 @@ if submit_button:
         # Parse the response to extract the relevant information
         response_dict = json.loads(response_text)
 
-        # Extract Job Description Match percentage
+        # Extract the "Job Description Match" percentage from the response dictionary
         match_percentage_str = response_dict.get("Job Description Match", "N/A")
 
-        st.subheader("ATS Evaluation Result:")
-        st.write(response_text)
+        # Display the "Job Description Match" percentage
+        st.write(f"{'Job Description Match:'} {match_percentage_str}")
 
-        # Extract and display Missing Keywords, Candidate Summary, and Experience
-        missing_keywords = response_dict.get("Missing Keywords", "")
-        candidate_summary = response_dict.get("Candidate Summary", "")
-        experience = response_dict.get("Experience", "")
+        # Extract and display Missing Keywords, Candidate Summary, and Experience if they are present in the response
+        if "Missing Keywords" in response_dict:
+            missing_keywords = response_dict["Missing Keywords"]
+            st.write(f"Missing Keywords: {missing_keywords}")
 
-        st.write(f"Missing Keywords: {missing_keywords}")
-        st.write(f"Candidate Summary: {candidate_summary}")
-        st.write(f"Experience: {experience}")
+        if "Candidate Summary" in response_dict:
+            candidate_summary = response_dict["Candidate Summary"]
+            st.write(f"Candidate Summary: {candidate_summary}")
+
+        if "Experience" in response_dict:
+            experience = response_dict["Experience"]
+            st.write(f"Experience: {experience}")
 
         # Display message based on Job Description Match percentage
         if match_percentage_str != "N/A":
@@ -109,3 +111,7 @@ if submit_button:
                 st.text("Move forward with hiring")
             else:
                 st.text("Not a Match")
+# Inform the user to run the application multiple times for better results
+st.write("For better results, run the application multiple times (at least 5 times).")
+
+
